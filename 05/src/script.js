@@ -1,3 +1,4 @@
+import gsap from "gsap";
 import * as THREE from "three";
 
 // Canvas
@@ -10,8 +11,8 @@ const scene = new THREE.Scene();
  * Objects
  */
 const group = new THREE.Group();
-group.position.y = 1;
-group.scale.y = 2;
+group.position.y = 0;
+group.scale.y = 1.2;
 group.rotation.y = 1;
 
 scene.add(group);
@@ -47,7 +48,7 @@ scene.add(new THREE.AxesHelper());
  * Sizes
  */
 const sizes = {
-  width: 800,
+  width: 1180,
   height: 600,
 };
 
@@ -67,3 +68,22 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// const clock = new THREE.Clock();
+
+gsap.to(group.position, { duration: 3, delay: 1, x: 2 });
+gsap.to(group.position, { duration: 3, delay: 4, x: 0 });
+
+const tick = () => {
+  // const elapsedTime = clock.getElapsedTime();
+
+  // // Update objects
+  // group.rotation.y = elapsedTime * Math.PI;
+
+  // Render
+  renderer.render(scene, camera);
+
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick);
+};
+tick();

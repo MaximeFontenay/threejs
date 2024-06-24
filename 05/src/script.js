@@ -48,7 +48,7 @@ scene.add(new THREE.AxesHelper());
  * Sizes
  */
 const sizes = {
-  width: 1180,
+  width: 1380,
   height: 600,
 };
 

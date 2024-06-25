@@ -1,5 +1,14 @@
+import gsap from "gsap";
+import GUI from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+const gui = new GUI({
+  width: 300,
+});
+gui.close();
+
+const debugObject = {};
 
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
@@ -9,24 +18,47 @@ const size = {
   height: window.innerHeight,
 };
 
-const geometry = new THREE.BufferGeometry();
-
-const count = 5;
-const positionsArray = new Float32Array(count * 3 * 3);
-for (let i = 0; i < count * 3 * 3; i++) {
-  positionsArray[i] = (Math.random() - 0.5) * 4;
-}
-
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-geometry.setAttribute("position", positionsAttribute);
-
+debugObject.color = "#4f82e8";
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
 const material = new THREE.MeshBasicMaterial({
-  color: 0x83f265,
-  wireframe: true,
+  color: debugObject.color,
 });
 
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
+
+gui.add(mesh.position, "x").min(-3).max(3).step(0.01).name("X position");
+gui.add(mesh.material, "visible").name("Visibility");
+gui.add(mesh.material, "wireframe").name("Wireframe");
+gui
+  .addColor(debugObject, "color")
+  .name("Color")
+  .onChange((value) => {
+    material.color.set(value);
+  });
+
+debugObject.spin = () => {
+  gsap.to(mesh.rotation, { y: mesh.rotation.y + Math.PI * 2 });
+};
+gui.add(debugObject, "spin");
+
+debugObject.subdivision = 2;
+gui
+  .add(debugObject, "subdivision")
+  .min(1)
+  .max(10)
+  .step(1)
+  .onFinishChange(() => {
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.BoxGeometry(
+      1,
+      1,
+      1,
+      debugObject.subdivision,
+      debugObject.subdivision,
+      debugObject.subdivision
+    );
+  });
 
 const camera = new THREE.PerspectiveCamera(
   75,

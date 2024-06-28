@@ -1,4 +1,3 @@
-import GUI from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
@@ -14,7 +13,7 @@ const fontLoader = new FontLoader();
 fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
   console.log(font);
 
-  textGeometry = new TextGeometry("Hello Three.js", {
+  textGeometry = new TextGeometry("Maxime Fontenay", {
     font: font,
     size: 0.5,
     depth: 0.2,
@@ -35,7 +34,7 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
 
   const cudeGeometry = new THREE.SphereGeometry(0.05);
 
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 500; i++) {
     const cube = new THREE.Mesh(cudeGeometry, material);
     cube.position.x = (Math.random() - 0.5) * 4;
     cube.position.y = (Math.random() - 0.5) * 4;
@@ -51,32 +50,11 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
   }
 });
 
-/**
- * Base
- */
-// Debug
-const gui = new GUI();
-
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
-scene.add(new THREE.AxesHelper());
-
-/**
- * Textures
- */
-
-/**
- * Object
- */
-// const cube = new THREE.Mesh(
-//   new THREE.BoxGeometry(1, 1, 1),
-//   new THREE.MeshBasicMaterial()
-// );
-
-// scene.add(cube);
 
 /**
  * Sizes
@@ -110,8 +88,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = 0.5;
-camera.position.z = 2;
+camera.position.x = 0.1;
+camera.position.z = 2.5;
 scene.add(camera);
 
 // Controls

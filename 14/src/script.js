@@ -1,0 +1,198 @@
+import GUI from "lil-gui";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+/**
+ * Base
+ */
+// Debug
+const gui = new GUI({
+  width: 400,
+});
+
+// Canvas
+const canvas = document.querySelector("canvas.webgl");
+
+// Scene
+const scene = new THREE.Scene();
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+//scene.add(ambientLight);
+// gui
+//   .add(ambientLight, "intensity")
+//   .min(0)
+//   .max(3)
+//   .step(0.001)
+//   .name("Ambient Light Intensity");
+
+const directionalLight = new THREE.DirectionalLight(0x44feaa, 1);
+directionalLight.position.set(1, -1, 1);
+//scene.add(directionalLight);
+// gui
+//   .add(directionalLight, "intensity")
+//   .min(0)
+//   .max(3)
+//   .step(0.001)
+//   .name("Directional Light Intensity");
+
+const hemisphereLight = new THREE.HemisphereLight(0x00bbcc, 0xee0011, 1);
+scene.add(hemisphereLight);
+// gui
+//   .add(hemisphereLight, "intensity")
+//   .min(0)
+//   .max(3)
+//   .step(0.001)
+//   .name("HemisphereLight Light Intensity");
+
+const pointLight = new THREE.PointLight(0xff0000, 1.5, 10, 2);
+pointLight.position.set(0.7, 0, 1.2);
+scene.add(pointLight);
+// gui
+//   .add(pointLight, "intensity")
+//   .min(0)
+//   .max(3)
+//   .step(0.001)
+//   .name("PointLight Light Intensity");
+
+// gui
+//   .add(pointLight, "decay")
+//   .min(0)
+//   .max(50)
+//   .step(1)
+//   .name("PointLight Light Decay");
+
+// gui
+//   .add(pointLight, "intensity")
+//   .min(0)
+//   .max(50)
+//   .step(1)
+//   .name("PointLight Light Intensity");
+
+// const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 8, 1, 1);
+// rectAreaLight.position.set(-2, 0, 1.2);
+// rectAreaLight.lookAt(new THREE.Vector3());
+// scene.add(rectAreaLight);
+
+const spotLight = new THREE.SpotLight(0x78ff00, 13, 5, 1, 0.5, 1.2);
+spotLight.position.set(0, 0, 4);
+gui.add(spotLight, "intensity").min(0).max(100).step(1).name("intensity");
+gui.add(spotLight, "distance").min(0).max(100).step(1).name("distance");
+gui.add(spotLight, "angle").min(0).max(1).step(0.0001).name("angle");
+gui.add(spotLight, "penumbra").min(0).max(1).step(0.001).name("penumbra");
+gui.add(spotLight, "decay").min(0).max(3).step(0.001).name("decay");
+scene.add(spotLight);
+
+const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+
+/**
+ * Objects
+ */
+// Material
+const material = new THREE.MeshStandardMaterial();
+material.side = THREE.DoubleSide;
+material.roughness = 0.4;
+
+// Objects
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material);
+sphere.position.x = -1.5;
+
+const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), material);
+
+const torus = new THREE.Mesh(
+  new THREE.TorusGeometry(0.3, 0.2, 32, 64),
+  material
+);
+torus.position.x = 1.5;
+
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
+plane.rotation.x = -Math.PI * 0.5;
+plane.position.y = -0.65;
+plane.doubleSided = true;
+
+scene.add(sphere, cube, torus, plane);
+
+/**
+ * Sizes
+ */
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+};
+
+window.addEventListener("resize", () => {
+  // Update sizes
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(
+  75,
+  sizes.width / sizes.height,
+  0.1,
+  100
+);
+camera.position.x = 1;
+camera.position.y = 1;
+camera.position.z = 2;
+scene.add(camera);
+
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas,
+  antialias: true,
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+/**
+ * Animate
+ */
+const clock = new THREE.Clock();
+
+const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  // Update objects
+  sphere.rotation.y = 0.1 * elapsedTime;
+  cube.rotation.y = 0.1 * elapsedTime;
+  torus.rotation.y = 0.1 * elapsedTime;
+
+  sphere.rotation.x = 0.15 * elapsedTime;
+  cube.rotation.x = 0.15 * elapsedTime;
+  torus.rotation.x = 0.15 * elapsedTime;
+
+  spotLightHelper.update();
+
+  // Update controls
+  controls.update();
+
+  // Render
+  renderer.render(scene, camera);
+
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick);
+};
+
+tick();

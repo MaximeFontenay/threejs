@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+.webgl {
+  outline: none;
+}
+
+.sketchfab-embed-wrapper,
+.sketchfab-embed-wrapper iframe {
+  width: 100%;
+  min-height: 35vh;
+}
